@@ -1,0 +1,18 @@
+#
+# this is your module manifest and used by Titanium
+# during compilation, packaging, distribution, etc.
+#
+version: 0.1
+apiversion: 2
+description: My module
+author: Your Name
+license: Specify your license
+copyright: Copyright (c) 2013 by Your Company
+
+
+# these should not be edited
+name: TiCameraView
+moduleid: be.k0suke.ticamera
+guid: 6f5e772c-e468-4464-af5c-f1e5a135476d
+platform: iphone
+minsdk: 3.1.0.GA
