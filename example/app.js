@@ -64,7 +64,7 @@ recording.addEventListener('click', function(){
 				});
 			},
 			error: function(e){
-
+				console.log(e);
 			}
 		});
 		recording.setTitle('recording');

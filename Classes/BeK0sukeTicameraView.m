@@ -214,12 +214,6 @@
     ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
     ENSURE_UI_THREAD(stopRecording, args);
 
-    if (!isRecording)
-    {
-        NSLog(@"[WARN] video recording not start");
-        return;
-    }
-    
     successRecordingCallback = [args objectForKey:@"success"];
 	ENSURE_TYPE_OR_NIL(successRecordingCallback, KrollCallback);
 	[successRecordingCallback retain];
@@ -227,6 +221,18 @@
     errorRecordingCallback = [args objectForKey:@"error"];
 	ENSURE_TYPE_OR_NIL(errorRecordingCallback, KrollCallback);
 	[errorRecordingCallback retain];
+    
+    if (!isRecording)
+    {
+        NSLog(@"[WARN] video recording not start");
+        if (errorRecordingCallback != nil)
+        {
+            id listener = [[errorRecordingCallback retain] autorelease];
+            NSMutableDictionary *event = [TiUtils dictionaryWithCode:-1 message:@"video recording not start"];
+            [NSThread detachNewThreadSelector:@selector(dispatchCallback:) toTarget:self withObject:[NSArray arrayWithObjects:@"error", event, listener, nil]];
+        }
+        return;
+    }
     
     if ([TiUtils boolValue:[args valueForKey:@"recordingSound"] def:YES])
     {
