@@ -9,8 +9,9 @@
 {
 }
 
--(BOOL)hasFrontCamera:(id)args;
--(BOOL)hasBackCamera:(id)args;
+-(id)hasFrontCamera:(id)args;
+-(id)hasBackCamera:(id)args;
+-(id)hasTorch:(id)args;
 
 @property (nonatomic, readonly) NSNumber *CAMERA_FRONT;
 @property (nonatomic, readonly) NSNumber *CAMERA_BACK;

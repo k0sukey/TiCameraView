@@ -26,7 +26,13 @@
 @property (nonatomic, strong) AVAssetWriterInput *recordingInput;
 @property (nonatomic, strong) AVAssetWriterInputPixelBufferAdaptor *recordingAdaptor;
 
+-(id)isFrontCamera:(id)args;
+-(id)isBackCamera:(id)args;
+-(id)isTorch:(id)args;
+
 -(void)toggleCamera:(id)args;
+-(void)toggleTorch:(id)args;
+
 -(void)takePicture:(id)args;
 -(void)startRecording:(id)args;
 -(void)stopRecording:(id)args;

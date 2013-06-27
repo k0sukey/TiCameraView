@@ -292,6 +292,57 @@
 #endif
 }
 
+-(id)isFrontCamera:(id)args
+{
+#ifndef __i386__
+    if ([[AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo] count] > 1)
+    {
+        NSError *error = nil;
+        
+        AVCaptureDevicePosition position = [[self.videoInput device] position];
+        if (position == AVCaptureDevicePositionFront)
+        {
+            return NUMBOOL(YES);
+        }
+    }
+    
+    return NUMBOOL(NO);
+#endif
+}
+
+-(id)isBackCamera:(id)args
+{
+#ifndef __i386__
+    if ([[AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo] count] > 1)
+    {
+        NSError *error = nil;
+        
+        AVCaptureDevicePosition position = [[self.videoInput device] position];
+        if (position == AVCaptureDevicePositionFront)
+        {
+            return NUMBOOL(NO);
+        }
+    }
+    
+    return NUMBOOL(YES);
+#endif
+}
+
+-(id)isTorch:(id)args
+{
+#ifndef __i386__
+    AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    NSError *error = nil;
+    
+    if ([device hasTorch] == YES && device.torchMode == AVCaptureTorchModeOn)
+    {
+        return NUMBOOL(YES);
+    }
+    
+    return NUMBOOL(NO);
+#endif
+}
+
 -(void)toggleCamera:(id)args
 {
 #ifndef __i386__
@@ -334,35 +385,48 @@
 #endif
 }
 
+-(void)toggleTorch:(id)args
+{
+#ifndef __i386__
+    if ([[AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo] count] > 1)
+    {
+        NSError *error = nil;
+        
+        AVCaptureDevicePosition position = [[self.videoInput device] position];
+        if (position == AVCaptureDevicePositionFront)
+        {
+            NSLog(@"[ERROR] do not support torch in front camera mode");
+            return;
+        }
+    }
+
+    AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    NSError *error = nil;
+    
+    if ([device hasTorch])
+    {
+        NSLog(@"[ERROR] do not support torch in this device");
+        return;
+    }
+    
+    if (device.torchMode == AVCaptureTorchModeOff)
+    {
+        [device lockForConfiguration:&error];
+        device.torchMode = AVCaptureTorchModeOn;
+        [device unlockForConfiguration];
+    }
+    else
+    {
+        [device lockForConfiguration:&error];
+        device.torchMode = AVCaptureTorchModeOff;
+        [device unlockForConfiguration];
+    }
+#endif
+}
+
 #ifndef __i386__
 -(CVPixelBufferRef)pixelBufferFromCGImage:(CGImageRef)image size:(CGSize)size
 {
-/*    NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
-                             [NSNumber numberWithBool:YES], kCVPixelBufferCGImageCompatibilityKey,
-                             [NSNumber numberWithBool:YES], kCVPixelBufferCGBitmapContextCompatibilityKey,
-                             nil];
-    CVPixelBufferRef pxbuffer = NULL;
-    CVReturn status = CVPixelBufferCreate(kCFAllocatorDefault, size.width, size.height,
-                                          kCVPixelFormatType_32ARGB, (CFDictionaryRef) options, &pxbuffer);
-    NSParameterAssert(status == kCVReturnSuccess && pxbuffer != NULL);
-    
-    CVPixelBufferLockBaseAddress(pxbuffer, 0);
-    void *pxdata = CVPixelBufferGetBaseAddress(pxbuffer);
-    NSParameterAssert(pxdata != NULL);
-    
-    CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
-    CGContextRef context = CGBitmapContextCreate(pxdata, size.width, size.height,
-                                                 8, 4 * size.width, rgbColorSpace, kCGImageAlphaNoneSkipFirst);
-    NSParameterAssert(context);
-    
-    CGContextDrawImage(context, CGRectMake(0, 0, CGImageGetWidth(image), CGImageGetHeight(image)), image);
-    CGColorSpaceRelease(rgbColorSpace);
-    CGContextRelease(context);
-    
-    CVPixelBufferUnlockBaseAddress(pxbuffer, 0);
-    
-    return pxbuffer;*/
-    
     CVPixelBufferRef pxbuffer = NULL;
     CVReturn status = CVPixelBufferPoolCreatePixelBuffer(NULL, self.recordingAdaptor.pixelBufferPool, &pxbuffer);
     NSParameterAssert(status == kCVReturnSuccess && pxbuffer != NULL);

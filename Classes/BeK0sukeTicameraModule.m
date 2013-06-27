@@ -101,7 +101,7 @@
 	// example property setter
 }
 
--(BOOL)hasFrontCamera:(id)args
+-(id)hasFrontCamera:(id)args
 {
     NSArray *Devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
     
@@ -109,13 +109,13 @@
     {
         if ([Device position] == AVCaptureDevicePositionFront)
         {
-            return YES;
+            return NUMBOOL(YES);
         }
     }
-    return NO;
+    return NUMBOOL(NO);
 }
 
--(BOOL)hasBackCamera:(id)args
+-(id)hasBackCamera:(id)args
 {
     NSArray *Devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
     
@@ -123,10 +123,22 @@
     {
         if ([Device position] == AVCaptureDevicePositionBack)
         {
-            return YES;
+            return NUMBOOL(YES);
         }
     }
-    return NO;
+    return NUMBOOL(NO);
+}
+
+-(id)hasTorch:(id)args
+{
+    AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+   
+    if ([device hasTorch] == YES)
+    {
+        return NUMBOOL(YES);
+    }
+
+    return NUMBOOL(NO);
 }
 
 MAKE_SYSTEM_PROP(CAMERA_FRONT, AVCaptureDevicePositionFront);

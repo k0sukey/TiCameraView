@@ -18,26 +18,51 @@ var cameraView = TiCamera.createView({
 	height: 320,
 	backgroundColor: '#000',
 	videoQuality: TiCamera.QUALITY_MEDIUM,
-	cameraPosition: TiCamera.hasFrontCamera() ? TiCamera.CAMERA_FRONT : TiCamera.CAMERA_BACK,
-	frameDuration: 30
+	cameraPosition: TiCamera.hasBackCamera() ? TiCamera.CAMERA_BACK : TiCamera.CAMERA_FRONT,
+	frameDuration: 16
 });
 win.add(cameraView);
 
-var toggle = Ti.UI.createButton({
+cameraView.add(Ti.UI.createView({
+	width: 20,
+	height: 20,
+	backgroundColor: '#f00',
+	borderRadius: 10
+}));
+
+var camera = Ti.UI.createButton({
 	top: 10,
 	left: 10,
 	width: Ti.UI.SIZE,
 	height: 44,
-	title: 'toggle'
+	title: 'camera'
 });
-win.add(toggle);
+win.add(camera);
 
-toggle.addEventListener('click', function(){
+camera.addEventListener('click', function(){
 	cameraView.toggleCamera();
+});
+
+var torch = Ti.UI.createButton({
+	top: 64,
+	left: 10,
+	width: Ti.UI.SIZE,
+	height: 44,
+	title: 'torch'
+});
+win.add(torch);
+
+torch.addEventListener('click', function(){
+	if (cameraView.isBackCamera()) {
+		cameraView.toggleTorch();
+	} else {
+		alert('Do not use toggleTorch method, in front camera mode');
+	}
 });
 
 var recording = Ti.UI.createButton({
 	top: 10,
+	right: 10,
 	width: Ti.UI.SIZE,
 	height: 44,
 	title: 'recording'
@@ -74,17 +99,17 @@ recording.addEventListener('click', function(){
 		recording.setTitle('stop');
 
 		cameraView.startRecording({
-			recordingSound: shutter.getValue()	// default true
+			recordingSound: shutter.getValue()		// default true
 		});
 	}
 });
 
 var capture = Ti.UI.createButton({
-	top: 10,
+	top: 64,
 	right: 10,
 	width: Ti.UI.SIZE,
 	height: 44,
-	title: 'capture'
+	title: 'photo'
 });
 win.add(capture);
 
@@ -93,6 +118,10 @@ capture.addEventListener('click', function(){
 		saveToPhotoGallery: save.getValue(),	// default false
 		shutterSound: shutter.getValue(),		// default true
 		success: function(e){
+			console.log(e);
+			console.log('width: ' + e.media.width);
+			console.log('height: ' + e.media.height);
+			console.log('mime: ' + e.media.mime);
 			preview.setImage(e.media);
 		},
 		error: function(e){
@@ -102,15 +131,13 @@ capture.addEventListener('click', function(){
 });
 
 var save = Ti.UI.createSwitch({
-	top: 64,
-	left: 10,
+	top: 10,
 	value: false
 });
 win.add(save);
 
 var shutter = Ti.UI.createSwitch({
 	top: 64,
-	right: 10,
 	value: false
 });
 win.add(shutter);
