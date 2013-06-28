@@ -133,6 +133,10 @@ Recording movie in created CameraView method
 #### startInterval / stopInterval
 Interval timer shooting camera in created CameraView method
 
+### Events
+#### interval
+Interval timer shooting camera event
+
 ## Changelog
 ### Jun 28
 * new method, toggleTorch / isFrontCamera / isBackCamera / isTorch
