@@ -83,6 +83,7 @@ cameraView.startInterval({
 	shutterSound: false,		// default true
 	intervalDelay: 1000			// msec
 });
+```
 
 ### Toggle LED flash light
 ```
