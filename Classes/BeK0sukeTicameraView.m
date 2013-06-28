@@ -292,6 +292,33 @@
 #endif
 }
 
+-(void)startInterval:(id)args
+{
+    ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
+    ENSURE_UI_THREAD(startInterval, args);
+    
+    intervalSaveToPhotoGallery = [TiUtils boolValue:[args valueForKey:@"saveToPhotoGallery"] def:NO];
+    intervalShutterSound = [TiUtils boolValue:[args valueForKey:@"shutterSound"] def:YES];
+    
+    NSNumber *delay = [NSNumber numberWithFloat:[[args objectForKey:@"intervalDelay"] intValue] / 1000];
+    isInterval = NO;
+    
+    self.intervalTimer = [NSTimer scheduledTimerWithTimeInterval:[delay floatValue] target:self selector:@selector(intervalFlag:) userInfo:nil repeats:YES];
+}
+
+-(void)intervalFlag:(NSTimer*)timer
+{
+    isInterval = YES;
+}
+
+-(void)stopInterval:(id)args
+{
+    ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
+    ENSURE_UI_THREAD(stopInterval, args);
+
+    [self.intervalTimer invalidate];
+}
+
 -(id)isFrontCamera:(id)args
 {
 #ifndef __i386__
@@ -492,6 +519,27 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
        fromConnection:(AVCaptureConnection *)connection
 {
     UIImage *image = [self imageFromSampleBuffer:sampleBuffer];
+    
+    if (isInterval && [self.proxy _hasListeners:@"interval"])
+	{
+        isInterval = NO;
+        
+        if (intervalShutterSound)
+        {
+            AudioServicesPlaySystemSound(1108);
+        }
+
+        if (intervalSaveToPhotoGallery)
+        {
+            UIImageWriteToSavedPhotosAlbum(image, self, nil, nil);
+        }
+        
+        NSDictionary *properties = [NSDictionary dictionaryWithObjectsAndKeys:
+                                    [[[TiBlob alloc] initWithImage:image] autorelease], @"media",
+                                    nil];
+		[self.proxy fireEvent:@"interval" withObject:properties];
+    }
+    
     
     dispatch_async(dispatch_get_main_queue(), ^{
         self.videoPreview.image = image;

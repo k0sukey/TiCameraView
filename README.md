@@ -65,6 +65,25 @@ cameraView.stopRecording({
 });
 ```
 
+### Interval timer shooting camera in CameraView
+```
+var counter = 0;
+cameraView.addEventListener('interval', function(e){
+	// e.media(TiBlob), like Ti.Media.showCamera
+	if (counter >= 10) {
+		cameraView.stopInterval();
+		return;
+	}
+
+	counter++;
+});
+
+cameraView.startInterval({
+	saveToPhotoGallery: true,	// default false
+	shutterSound: false,		// default true
+	intervalDelay: 1000			// msec
+});
+
 ### Toggle LED flash light
 ```
 if (cameraView.isBackCamera()) {
@@ -90,23 +109,29 @@ fps, roughly 16 - 30
 #### hasFrontCamera / hasBackCamera
 Has camera check in device, front or back
 
+#### hasTorch
+Has LED flash light check in device
+
 #### isFrontCamera / isBackCamera
-Now camera mode, front or back
+Now camera mode, front or back in created CameraView method
 
 #### isTorch
-Now LED flash light on or off
+Now LED flash light on or off in created CameraView method
 
 #### toggleCamera
-Toggle front or back camera
+Toggle front or back camera in created CameraView method
 
 #### toggleTorch
-Toggle LED flash light on or off
+Toggle LED flash light on or off in created CameraView method
 
 #### takePicture
-Take picrute in CameraView
+Take picrute in created CameraView method
 
 #### startRecording / stopRecording
-Recording movie in CameraView
+Recording movie in created CameraView method
+
+#### startInterval / stopInterval
+Interval timer shooting camera in created CameraView method
 
 ## Changelog
 ### Jun 28

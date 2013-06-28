@@ -23,19 +23,12 @@ var cameraView = TiCamera.createView({
 });
 win.add(cameraView);
 
-cameraView.add(Ti.UI.createView({
-	width: 20,
-	height: 20,
-	backgroundColor: '#f00',
-	borderRadius: 10
-}));
-
 var camera = Ti.UI.createButton({
-	top: 10,
+	top: 64,
 	left: 10,
 	width: Ti.UI.SIZE,
 	height: 44,
-	title: 'camera'
+	title: 'toggle camera'
 });
 win.add(camera);
 
@@ -45,10 +38,10 @@ camera.addEventListener('click', function(){
 
 var torch = Ti.UI.createButton({
 	top: 64,
-	left: 10,
+	right: 10,
 	width: Ti.UI.SIZE,
 	height: 44,
-	title: 'torch'
+	title: 'toggle torch'
 });
 win.add(torch);
 
@@ -105,8 +98,8 @@ recording.addEventListener('click', function(){
 });
 
 var capture = Ti.UI.createButton({
-	top: 64,
-	right: 10,
+	top: 10,
+	left: 10,
 	width: Ti.UI.SIZE,
 	height: 44,
 	title: 'photo'
@@ -130,14 +123,46 @@ capture.addEventListener('click', function(){
 	});
 });
 
-var save = Ti.UI.createSwitch({
+var interval = Ti.UI.createButton({
 	top: 10,
+	width: Ti.UI.SIZE,
+	height: 44,
+	title: 'interval'
+});
+win.add(interval);
+
+cameraView.addEventListener('interval', function(e){
+	preview.setImage(e.media);
+});
+
+var isInterval = false;
+interval.addEventListener('click', function(){
+	if (isInterval) {
+		isInterval = false;
+		interval.setTitle('interval');
+		cameraView.stopInterval();
+	} else {
+		isInterval = true;
+		interval.setTitle('stop');
+
+		cameraView.startInterval({
+			saveToPhotoGallery: save.getValue(),	// default false
+			shutterSound: shutter.getValue(),		// default true
+			intervalDelay: 1000
+		});
+	}
+});
+
+var save = Ti.UI.createSwitch({
+	bottom: 10,
+	left: 10,
 	value: false
 });
 win.add(save);
 
 var shutter = Ti.UI.createSwitch({
-	top: 64,
+	right: 10,
+	bottom: 10,
 	value: false
 });
 win.add(shutter);

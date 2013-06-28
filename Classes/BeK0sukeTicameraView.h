@@ -15,6 +15,9 @@
     NSURL *recordingUrl;
     CGSize recordingSize;
     NSInteger __block recordingFrame;
+    BOOL *isInterval;
+    BOOL *intervalSaveToPhotoGallery;
+    BOOL *intervalShutterSound;
 }
 
 @property (nonatomic, strong) AVCaptureDeviceInput *videoInput;
@@ -25,6 +28,7 @@
 @property (nonatomic, strong) AVAssetWriter *recordingWriter;
 @property (nonatomic, strong) AVAssetWriterInput *recordingInput;
 @property (nonatomic, strong) AVAssetWriterInputPixelBufferAdaptor *recordingAdaptor;
+@property (nonatomic, strong) NSTimer *intervalTimer;
 
 -(id)isFrontCamera:(id)args;
 -(id)isBackCamera:(id)args;
@@ -36,5 +40,7 @@
 -(void)takePicture:(id)args;
 -(void)startRecording:(id)args;
 -(void)stopRecording:(id)args;
+-(void)startInterval:(id)args;
+-(void)stopInterval:(id)args;
 
 @end

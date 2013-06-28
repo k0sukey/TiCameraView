@@ -18,5 +18,7 @@
 -(void)takePicture:(id)args;
 -(void)startRecording:(id)args;
 -(void)stopRecording:(id)args;
+-(void)startInterval:(id)args;
+-(void)stopInterval:(id)args;
 
 @end

@@ -37,5 +37,7 @@ USE_VIEW_FOR_UI_METHOD(toggleTorch);
 USE_VIEW_FOR_UI_METHOD(takePicture);
 USE_VIEW_FOR_UI_METHOD(startRecording);
 USE_VIEW_FOR_UI_METHOD(stopRecording);
+USE_VIEW_FOR_UI_METHOD(startInterval);
+USE_VIEW_FOR_UI_METHOD(stopInterval);
 
 @end
