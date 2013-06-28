@@ -140,7 +140,8 @@ Interval timer shooting camera event
 
 ## Changelog
 ### Jun 28
-* new method, toggleTorch / isFrontCamera / isBackCamera / isTorch
+* new methods, toggleTorch / isFrontCamera / isBackCamera / isTorch / hasTorch
+* new methods, startInterval / stopInterval and new event interval for interval timer shooting
 
 ## License
 
