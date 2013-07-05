@@ -18,6 +18,22 @@
     [super dealloc];
 }
 
+-(id)init
+{
+    self = [super init];
+    
+    if (self)
+    {
+        UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc]
+                                                 initWithTarget:self
+                                                 action:@selector(tapDetected:)];
+        [self addGestureRecognizer:tapRecognizer];
+        [tapRecognizer release];
+    }
+    
+    return self;
+}
+
 -(void)frameSizeChanged:(CGRect)frame bounds:(CGRect)bounds
 {
 #ifndef __i386__
@@ -65,6 +81,11 @@
     self.videoSession.sessionPreset = [TiUtils intValue:[self.proxy valueForKey:@"videoQuality"]
                                                     def:AVCaptureSessionPresetMedium];
     [self.videoSession commitConfiguration];
+    
+    [captureDevice addObserver:self
+                    forKeyPath:@"adjustingExposure"
+                       options:NSKeyValueObservingOptionNew
+                       context:nil];
     
     self.videoOutput = [[AVCaptureVideoDataOutput alloc] init];
     [self.videoSession addOutput:self.videoOutput];
@@ -430,7 +451,7 @@
     AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
     NSError *error = nil;
     
-    if ([device hasTorch])
+    if (![device hasTorch])
     {
         NSLog(@"[ERROR] do not support torch in this device");
         return;
@@ -486,32 +507,39 @@
     CVPixelBufferLockBaseAddress(imageBuffer, 0);
     
     uint8_t *baseAddress = (uint8_t *)CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 0);
-    
-    size_t bytesPerRow = CVPixelBufferGetBytesPerRow(imageBuffer);
     size_t width = CVPixelBufferGetWidth(imageBuffer);
     size_t height = CVPixelBufferGetHeight(imageBuffer);
-    
+    size_t bytesPerRow = CVPixelBufferGetBytesPerRow(imageBuffer);
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     
     CGContextRef context = CGBitmapContextCreate(baseAddress,
-                                                    width,
-                                                    height,
-                                                    8,
-                                                    bytesPerRow,
-                                                    colorSpace,
-                                                    kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
-    
-    CGImageRef cgImage = CGBitmapContextCreateImage(context);
-    
-    CGContextRelease(context);
+                                                 width,
+                                                 height,
+                                                 8,
+                                                 bytesPerRow,
+                                                 colorSpace,
+                                                 kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
+    CGImageRef imageRef = CGBitmapContextCreateImage(context);
     CGColorSpaceRelease(colorSpace);
+    CGContextRelease(context);
+    
+    UIGraphicsBeginImageContext(CGSizeMake(height, width));
+    context = UIGraphicsGetCurrentContext();
+    CGContextScaleCTM(context, 1.0, -1.0);
+    CGContextRotateCTM(context, -M_PI_2);
+    CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef);
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
     CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
-    
-    UIImage *image = [UIImage imageWithCGImage:cgImage scale:1.0 orientation:UIImageOrientationRight];
-    
-    CGImageRelease(cgImage);
+    CGImageRelease(imageRef);
     
     return image;
+}
+
+-(UIImage *)imageCropping:(UIImage *)image rect:(CGRect)rect
+{
+
 }
 
 -(void)captureOutput:(AVCaptureOutput *)captureOutput
@@ -519,6 +547,30 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
        fromConnection:(AVCaptureConnection *)connection
 {
     UIImage *image = [self imageFromSampleBuffer:sampleBuffer];
+    
+    float scale = [[UIScreen mainScreen] scale];
+    CGRect rect = CGRectMake((image.size.width - [TiUtils floatValue:[self.proxy valueForKey:@"width"]]) * scale / 2.0,
+                             (image.size.height - [TiUtils floatValue:[self.proxy valueForKey:@"height"]]) * scale / 2.0,
+                             [TiUtils floatValue:[self.proxy valueForKey:@"width"]] * scale,
+                             [TiUtils floatValue:[self.proxy valueForKey:@"height"]] * scale);
+    CGImageRef imageRef = CGImageCreateWithImageInRect([image CGImage], rect);
+    image = [UIImage imageWithCGImage:imageRef
+                                scale:scale
+                          orientation:UIImageOrientationUp];
+    CGImageRelease(imageRef);
+    
+    if (isSepia)
+    {
+        GPUImagePicture *imageSource = [[GPUImagePicture alloc] initWithImage:image smoothlyScaleOutput:NO];
+        GPUImageSepiaFilter *imageFilter = [[GPUImageSepiaFilter alloc] init];
+        [imageFilter prepareForImageCapture];
+        [imageSource addTarget:imageFilter];
+        [imageSource processImage];
+        image = [imageFilter imageFromCurrentlyProcessedOutputWithOrientation:image.imageOrientation];
+        [imageSource removeAllTargets];
+        [imageFilter release];
+        [imageSource release];
+    }
     
     if (isInterval && [self.proxy _hasListeners:@"interval"])
 	{
@@ -539,11 +591,6 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
                                     nil];
 		[self.proxy fireEvent:@"interval" withObject:properties];
     }
-    
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        self.videoPreview.image = image;
-    });
     
     if (isRecording)
     {
@@ -572,7 +619,73 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
             [self.recordingBuffer removeObjectAtIndex:0];
         }
     }
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.videoPreview.image = image;
+    });
+}
+
+-(void)tapDetected:(UITapGestureRecognizer*)tapRecognizer
+{
+    CGPoint point = [tapRecognizer locationInView:tapRecognizer.view];
+    CGPoint pointOfInterest = CGPointMake(point.y / [TiUtils floatValue:[self.proxy valueForKey:@"height"]],
+                                          1.0 - point.x / [TiUtils floatValue:[self.proxy valueForKey:@"width"]]);
+    
+    AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    NSError *error = nil;
+    
+    if ([device lockForConfiguration:&error])
+    {
+        if ([device isFocusPointOfInterestSupported] &&
+            [device isFocusModeSupported:AVCaptureFocusModeAutoFocus])
+        {
+            device.focusPointOfInterest = pointOfInterest;
+            device.focusMode = AVCaptureFocusModeAutoFocus;
+        }
+        
+        if ([device isExposurePointOfInterestSupported] &&
+            [device isExposureModeSupported:AVCaptureExposureModeContinuousAutoExposure])
+        {
+            adjustingExposure = YES;
+            device.exposurePointOfInterest = pointOfInterest;
+            device.exposureMode = AVCaptureExposureModeContinuousAutoExposure;
+        }
+        
+        [device unlockForConfiguration];
+    }
+}
+
+-(void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary *)change
+                       context:(void *)context
+{
+    if (!adjustingExposure)
+    {
+        return;
+    }
+    
+	if ([keyPath isEqual:@"adjustingExposure"])
+    {
+		if ([[change objectForKey:NSKeyValueChangeNewKey] boolValue] == NO)
+        {
+            adjustingExposure = NO;
+            AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+            
+			NSError *error = nil;
+			if ([device lockForConfiguration:&error])
+            {
+				[device setExposureMode:AVCaptureExposureModeLocked];
+				[device unlockForConfiguration];
+			}
+		}
+	}
 }
 #endif
+
+-(void)setSepia_:(id)args
+{
+    isSepia = [TiUtils boolValue:args def:NO];
+}
 
 @end

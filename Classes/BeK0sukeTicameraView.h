@@ -3,6 +3,7 @@
  */
 
 #import "TiUIView.h"
+#import "GPUImage.h"
 #import <AVFoundation/AVFoundation.h>
 
 @interface BeK0sukeTicameraView : TiUIView<AVCaptureAudioDataOutputSampleBufferDelegate, AVCaptureVideoDataOutputSampleBufferDelegate> {
@@ -18,6 +19,9 @@
     BOOL *isInterval;
     BOOL *intervalSaveToPhotoGallery;
     BOOL *intervalShutterSound;
+    BOOL *adjustingExposure;
+    
+    BOOL *isSepia;
 }
 
 @property (nonatomic, strong) AVCaptureDeviceInput *videoInput;
