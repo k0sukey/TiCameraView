@@ -161,11 +161,22 @@ var save = Ti.UI.createSwitch({
 win.add(save);
 
 var shutter = Ti.UI.createSwitch({
-	right: 10,
-	bottom: 10,
+	bottom: 44,
+	left: 10,
 	value: false
 });
 win.add(shutter);
+
+var sepia = Ti.UI.createSwitch({
+	bottom: 10,
+	right: 10,
+	value: false
+});
+win.add(sepia);
+
+sepia.addEventListener('change', function(){
+	cameraView.setSepia(sepia.getValue());
+});
 
 var preview = Ti.UI.createImageView({
 	bottom: 10,
