@@ -30,6 +30,9 @@
 		234D357F17717C830030BCEB /* BeK0sukeTicameraView.m in Sources */ = {isa = PBXBuildFile; fileRef = 234D357B17717C830030BCEB /* BeK0sukeTicameraView.m */; };
 		234D358017717C830030BCEB /* BeK0sukeTicameraViewProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 234D357C17717C830030BCEB /* BeK0sukeTicameraViewProxy.h */; };
 		234D358117717C830030BCEB /* BeK0sukeTicameraViewProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 234D357D17717C830030BCEB /* BeK0sukeTicameraViewProxy.m */; };
+		23581E0C177DCE9B00BAA444 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23581E0B177DCE9B00BAA444 /* OpenGLES.framework */; };
+		23581E0E177DCEA500BAA444 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23581E0D177DCEA500BAA444 /* QuartzCore.framework */; };
+		23581E13177DD8D800BAA444 /* libGPUImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 23581E08177DCDB100BAA444 /* libGPUImage.a */; };
 		24DD6CF91134B3F500162E58 /* BeK0sukeTicameraModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 24DD6CF71134B3F500162E58 /* BeK0sukeTicameraModule.h */; };
 		24DD6CFA1134B3F500162E58 /* BeK0sukeTicameraModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 24DD6CF81134B3F500162E58 /* BeK0sukeTicameraModule.m */; };
 		24DE9E1111C5FE74003F90F6 /* BeK0sukeTicameraModuleAssets.h in Headers */ = {isa = PBXBuildFile; fileRef = 24DE9E0F11C5FE74003F90F6 /* BeK0sukeTicameraModuleAssets.h */; };
@@ -39,6 +42,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		23581E07177DCDB100BAA444 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 23581E01177DCDB000BAA444 /* GPUImage.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BCF1A33414DDB1EC00852800;
+			remoteInfo = GPUImage;
+		};
+		23581E09177DCDB100BAA444 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 23581E01177DCDB000BAA444 /* GPUImage.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BCF1A34414DDB1EC00852800;
+			remoteInfo = GPUImageTests;
+		};
 		24416B8411C4CA280047AFDD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -58,6 +75,9 @@
 		234D357C17717C830030BCEB /* BeK0sukeTicameraViewProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BeK0sukeTicameraViewProxy.h; path = Classes/BeK0sukeTicameraViewProxy.h; sourceTree = "<group>"; };
 		234D357D17717C830030BCEB /* BeK0sukeTicameraViewProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BeK0sukeTicameraViewProxy.m; path = Classes/BeK0sukeTicameraViewProxy.m; sourceTree = "<group>"; };
 		234D35821771A7820030BCEB /* app.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = app.js; path = example/app.js; sourceTree = "<group>"; };
+		23581E01177DCDB000BAA444 /* GPUImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GPUImage.xcodeproj; path = GPUImage/framework/GPUImage.xcodeproj; sourceTree = "<group>"; };
+		23581E0B177DCE9B00BAA444 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		23581E0D177DCEA500BAA444 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		24DD6CF71134B3F500162E58 /* BeK0sukeTicameraModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BeK0sukeTicameraModule.h; path = Classes/BeK0sukeTicameraModule.h; sourceTree = "<group>"; };
 		24DD6CF81134B3F500162E58 /* BeK0sukeTicameraModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BeK0sukeTicameraModule.m; path = Classes/BeK0sukeTicameraModule.m; sourceTree = "<group>"; };
 		24DD6D1B1134B66800162E58 /* titanium.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = titanium.xcconfig; sourceTree = "<group>"; };
@@ -73,6 +93,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				23581E13177DD8D800BAA444 /* libGPUImage.a in Frameworks */,
+				23581E0E177DCEA500BAA444 /* QuartzCore.framework in Frameworks */,
+				23581E0C177DCE9B00BAA444 /* OpenGLES.framework in Frameworks */,
 				234D357117717B4E0030BCEB /* AVFoundation.framework in Frameworks */,
 				234D356F17717B480030BCEB /* CoreMedia.framework in Frameworks */,
 				234D356D17717B430030BCEB /* CoreVideo.framework in Frameworks */,
@@ -107,6 +130,9 @@
 		0867D69AFE84028FC02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				23581E01177DCDB000BAA444 /* GPUImage.xcodeproj */,
+				23581E0D177DCEA500BAA444 /* QuartzCore.framework */,
+				23581E0B177DCE9B00BAA444 /* OpenGLES.framework */,
 				234D357017717B4E0030BCEB /* AVFoundation.framework */,
 				234D356E17717B480030BCEB /* CoreMedia.framework */,
 				234D356C17717B430030BCEB /* CoreVideo.framework */,
@@ -129,6 +155,15 @@
 				234D357D17717C830030BCEB /* BeK0sukeTicameraViewProxy.m */,
 			);
 			name = Classes;
+			sourceTree = "<group>";
+		};
+		23581E02177DCDB000BAA444 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				23581E08177DCDB100BAA444 /* libGPUImage.a */,
+				23581E0A177DCDB100BAA444 /* GPUImageTests.octest */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		32C88DFF0371C24200C91783 /* Other Sources */ = {
@@ -193,6 +228,12 @@
 			mainGroup = 0867D691FE84028FC02AAC07 /* TiCameraView */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 23581E02177DCDB000BAA444 /* Products */;
+					ProjectRef = 23581E01177DCDB000BAA444 /* GPUImage.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				D2AAC07D0554694100DB518D /* TiCameraView */,
@@ -200,6 +241,23 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		23581E08177DCDB100BAA444 /* libGPUImage.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libGPUImage.a;
+			remoteRef = 23581E07177DCDB100BAA444 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		23581E0A177DCDB100BAA444 /* GPUImageTests.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = GPUImageTests.octest;
+			remoteRef = 23581E09177DCDB100BAA444 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXShellScriptBuildPhase section */
 		24416B8011C4CA220047AFDD /* ShellScript */ = {
@@ -262,6 +320,11 @@
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(TITANIUM_BASE_SDK)",
+					"$(TITANIUM_BASE_SDK2)",
+					"./GPUImage/framework/**",
+				);
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CFLAGS = (
@@ -299,6 +362,11 @@
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(TITANIUM_BASE_SDK)",
+					"$(TITANIUM_BASE_SDK2)",
+					"./GPUImage/framework/**",
+				);
 				INSTALL_PATH = /usr/local/lib;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				LIBRARY_SEARCH_PATHS = "";
@@ -333,6 +401,11 @@
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(TITANIUM_BASE_SDK)",
+					"$(TITANIUM_BASE_SDK2)",
+					"./GPUImage/framework/**",
+				);
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_CFLAGS = (
 					"-DDEBUG",
@@ -369,6 +442,11 @@
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(TITANIUM_BASE_SDK)",
+					"$(TITANIUM_BASE_SDK2)",
+					"./GPUImage/framework/**",
+				);
 				INSTALL_PATH = /usr/local/lib;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_CFLAGS = "-DTI_POST_1_2";

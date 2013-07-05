@@ -9,10 +9,12 @@ This CameraView is real time output ImageView from device camera. So the native 
 * Take picture
 * Recording movie
 * Toggle camera
+* Focus and adjust exposure
 
 ### Future goal
 * Recording audio in movie
 * Overlay on CameraView. You can add Label and ImageView, any more on CameraView like overlay.
+* GPUImage filters
 
 ## Usage
 More information, see example/app.js
