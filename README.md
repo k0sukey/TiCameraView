@@ -140,7 +140,18 @@ Interval timer shooting camera in created CameraView method
 #### interval
 Interval timer shooting camera event
 
+## In development
+It may change in the future.
+
+* GPUImage filters
+
+```
+cameraView.setSepia(true);
+```
+
 ## Changelog
+### Jul 05
+* Focus and adjust exposure
 ### Jun 28
 * new methods, toggleTorch / isFrontCamera / isBackCamera / isTorch / hasTorch
 * new methods, startInterval / stopInterval and new event interval for interval timer shooting
