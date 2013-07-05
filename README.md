@@ -152,6 +152,7 @@ cameraView.setSepia(true);
 ## Changelog
 ### Jul 05
 * Focus and adjust exposure
+
 ### Jun 28
 * new methods, toggleTorch / isFrontCamera / isBackCamera / isTorch / hasTorch
 * new methods, startInterval / stopInterval and new event interval for interval timer shooting
