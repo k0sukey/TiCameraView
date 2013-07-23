@@ -19,13 +19,8 @@ This CameraView is real time output ImageView from device camera. So the native 
 ## Build and Installation
 1. $ git clone git@github.com:k0sukey/TiCameraView.git
 2. $ cd TiCameraView
-3. $ git submodule init
-4. $ git submodule update
-5. $ cd GPUImage
-6. $ ./build.sh
-7. $ cd ..
-8. $ ./build.py
-9. Generated be.k0suke.ticamera-iphone-x.x.zip file copy to your Titanium project
+3. $ ./build.py
+4. Generated be.k0suke.ticamera-iphone-x.x.zip file copy to your Titanium project
 
 ## Usage
 More information, see example/app.js
@@ -157,8 +152,40 @@ Interval timer shooting camera event
 ## In development
 It may change in the future.
 
-* GPUImage filters
+### GPUImage filters
+1. $ git submodule init
+2. $ git submodule update
+3. $ cd GPUImage
+4. $ ./build.sh
+5. Build Settings - Header Search Paths - add ./GPUImage/framework, recursive
+6. Build Phases - Link Binary With Libraries - add libGPUImage.a
 
+#### BeK0sukeTicameraView.h
+```
+#import "GPUImage.h"
+```
+#### BeK0sukeTicameraView.m
+```
+if (isSepia)
+{
+	GPUImagePicture *imageSource = [[GPUImagePicture alloc] initWithImage:image smoothlyScaleOutput:NO];
+	GPUImageSepiaFilter *imageFilter = [[GPUImageSepiaFilter alloc] init];
+	[imageFilter prepareForImageCapture];
+	[imageSource addTarget:imageFilter];
+	[imageSource processImage];
+	image = [imageFilter imageFromCurrentlyProcessedOutputWithOrientation:image.imageOrientation];
+	[imageSource removeAllTargets];
+	[imageFilter release];
+	[imageSource release];
+}
+```
+```
+-(void)setSepia_:(id)args
+{
+    isSepia = [TiUtils boolValue:args def:NO];
+}
+```
+#### JavaScript
 ```
 cameraView.setSepia(true);
 ```

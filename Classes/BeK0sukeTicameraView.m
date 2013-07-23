@@ -12,16 +12,16 @@
     RELEASE_TO_NIL(errorPictureCallback);
     RELEASE_TO_NIL(successRecordingCallback);
     RELEASE_TO_NIL(errorRecordingCallback);
-    
+#ifndef __i386__
     [self.videoSession stopRunning];
-    
+#endif
     [super dealloc];
 }
 
 -(id)init
 {
     self = [super init];
-    
+#ifndef __i386__
     if (self)
     {
         UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc]
@@ -30,7 +30,7 @@
         [self addGestureRecognizer:tapRecognizer];
         [tapRecognizer release];
     }
-    
+#endif
     return self;
 }
 
@@ -108,6 +108,7 @@
 #endif
 }
 
+#ifndef __i386__
 -(AVCaptureDevice *)deviceWithPosition:(AVCaptureDevicePosition) position
 {
     NSArray *Devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
@@ -122,6 +123,7 @@
     
     return nil;
 }
+#endif
 
 -(void)takePicture:(id)args
 {
@@ -583,19 +585,6 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
                           orientation:UIImageOrientationUp];
     CGImageRelease(imageRef);
     
-    if (isSepia)
-    {
-        GPUImagePicture *imageSource = [[GPUImagePicture alloc] initWithImage:image smoothlyScaleOutput:NO];
-        GPUImageSepiaFilter *imageFilter = [[GPUImageSepiaFilter alloc] init];
-        [imageFilter prepareForImageCapture];
-        [imageSource addTarget:imageFilter];
-        [imageSource processImage];
-        image = [imageFilter imageFromCurrentlyProcessedOutputWithOrientation:image.imageOrientation];
-        [imageSource removeAllTargets];
-        [imageFilter release];
-        [imageSource release];
-    }
-    
     if (isInterval && [self.proxy _hasListeners:@"interval"])
 	{
         isInterval = NO;
@@ -706,10 +695,5 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 	}
 }
 #endif
-
--(void)setSepia_:(id)args
-{
-    isSepia = [TiUtils boolValue:args def:NO];
-}
 
 @end
