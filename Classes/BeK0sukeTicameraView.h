@@ -12,16 +12,17 @@
     KrollCallback *errorPictureCallback;
     KrollCallback *successRecordingCallback;
     KrollCallback *errorRecordingCallback;
-    BOOL *isRecording;
+    BOOL isRecording;
     NSURL *recordingUrl;
     CGSize recordingSize;
     NSInteger __block recordingFrame;
-    BOOL *isInterval;
-    BOOL *intervalSaveToPhotoGallery;
-    BOOL *intervalShutterSound;
-    BOOL *adjustingExposure;
+    BOOL isInterval;
+    BOOL intervalSaveToPhotoGallery;
+    BOOL intervalShutterSound;
+    BOOL adjustingExposure;
+    BOOL isCameraInputOutput;
     
-    BOOL *isSepia;
+    BOOL isSepia;
 }
 
 @property (nonatomic, strong) AVCaptureDeviceInput *videoInput;
@@ -37,6 +38,9 @@
 -(id)isFrontCamera:(id)args;
 -(id)isBackCamera:(id)args;
 -(id)isTorch:(id)args;
+
+-(void)startCamera:(id)args;
+-(void)stopCamera:(id)args;
 
 -(void)toggleCamera:(id)args;
 -(void)toggleTorch:(id)args;

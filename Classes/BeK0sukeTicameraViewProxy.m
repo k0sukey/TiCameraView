@@ -31,6 +31,9 @@
 }
 #endif
 
+USE_VIEW_FOR_UI_METHOD(startCamera);
+USE_VIEW_FOR_UI_METHOD(stopCamera);
+
 USE_VIEW_FOR_UI_METHOD(toggleCamera);
 USE_VIEW_FOR_UI_METHOD(toggleTorch);
 

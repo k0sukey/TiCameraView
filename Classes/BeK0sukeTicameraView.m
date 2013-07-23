@@ -90,7 +90,7 @@
     self.videoOutput = [[AVCaptureVideoDataOutput alloc] init];
     [self.videoSession addOutput:self.videoOutput];
     
-    dispatch_queue_t queue = dispatch_queue_create("be.k0suke.tilive.captureQueue", NULL);
+    dispatch_queue_t queue = dispatch_queue_create("be.k0suke.ticamera.captureQueue", NULL);
     [self.videoOutput setAlwaysDiscardsLateVideoFrames:TRUE];
     [self.videoOutput setSampleBufferDelegate:self queue:queue];
     
@@ -101,6 +101,8 @@
     AVCaptureConnection *videoConnection = [self.videoOutput connectionWithMediaType:AVMediaTypeVideo];
     videoConnection.videoMinFrameDuration = CMTimeMake(1, [TiUtils intValue:[self.proxy valueForKey:@"frameDuration"]
                                                                         def:16]);
+    
+    isCameraInputOutput = YES;
     
     [self.videoSession startRunning];
 #endif
@@ -260,7 +262,7 @@
         AudioServicesPlaySystemSound(1118);
     }
     
-    dispatch_queue_t queue = dispatch_queue_create("be.k0suke.tilive.recordingQueue", NULL);
+    dispatch_queue_t queue = dispatch_queue_create("be.k0suke.ticamera.recordingQueue", NULL);
     
     [self.recordingInput requestMediaDataWhenReadyOnQueue:queue usingBlock:^{
         while ([self.recordingInput isReadyForMoreMediaData])
@@ -472,6 +474,28 @@
 #endif
 }
 
+-(void)startCamera:(id)args
+{
+    if (isCameraInputOutput)
+    {
+        NSLog(@"[ERROR] camera input/output started");
+        return;
+    }
+    
+    isCameraInputOutput = YES;
+}
+
+-(void)stopCamera:(id)args
+{
+    if (!isCameraInputOutput)
+    {
+        NSLog(@"[ERROR] camera input/output stopped");
+        return;
+    }
+    
+    isCameraInputOutput = NO;
+}
+
 #ifndef __i386__
 -(CVPixelBufferRef)pixelBufferFromCGImage:(CGImageRef)image size:(CGSize)size
 {
@@ -537,15 +561,15 @@
     return image;
 }
 
--(UIImage *)imageCropping:(UIImage *)image rect:(CGRect)rect
-{
-
-}
-
 -(void)captureOutput:(AVCaptureOutput *)captureOutput
 didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
        fromConnection:(AVCaptureConnection *)connection
 {
+    if (!isCameraInputOutput)
+    {
+        return;
+    }
+    
     UIImage *image = [self imageFromSampleBuffer:sampleBuffer];
     
     float scale = [[UIScreen mainScreen] scale];

@@ -12,6 +12,9 @@
 -(id)isBackCamera:(id)args;
 -(id)isTorch:(id)args;
 
+-(void)startCamera:(id)args;
+-(void)stopCamera:(id)args;
+
 -(void)toggleCamera:(id)args;
 -(void)toggleTorch:(id)args;
 

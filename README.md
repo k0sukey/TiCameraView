@@ -16,6 +16,17 @@ This CameraView is real time output ImageView from device camera. So the native 
 * Overlay on CameraView. You can add Label and ImageView, any more on CameraView like overlay.
 * GPUImage filters
 
+## Build and Installation
+1. $ git clone git@github.com:k0sukey/TiCameraView.git
+2. $ cd TiCameraView
+3. $ git submodule init
+4. $ git submodule update
+5. $ cd GPUImage
+6. $ ./build.sh
+7. $ cd ..
+8. $ ./build.py
+9. Generated be.k0suke.ticamera-iphone-x.x.zip file copy to your Titanium project
+
 ## Usage
 More information, see example/app.js
 
@@ -136,6 +147,9 @@ Recording movie in created CameraView method
 #### startInterval / stopInterval
 Interval timer shooting camera in created CameraView method
 
+#### startCamera / stopCamera
+Start or stop camera output in created CameraView method
+
 ### Events
 #### interval
 Interval timer shooting camera event
@@ -150,12 +164,16 @@ cameraView.setSepia(true);
 ```
 
 ## Changelog
+### Jul 23
+* New methods, startCamera / stopCamera
+* Written build and installation manual
+
 ### Jul 05
 * Focus and adjust exposure
 
 ### Jun 28
-* new methods, toggleTorch / isFrontCamera / isBackCamera / isTorch / hasTorch
-* new methods, startInterval / stopInterval and new event interval for interval timer shooting
+* New methods, toggleTorch / isFrontCamera / isBackCamera / isTorch / hasTorch
+* New methods, startInterval / stopInterval and new event interval for interval timer shooting
 
 ## License
 
