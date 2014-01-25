@@ -552,7 +552,10 @@
     UIGraphicsBeginImageContext(CGSizeMake(height, width));
     context = UIGraphicsGetCurrentContext();
     CGContextScaleCTM(context, 1.0, -1.0);
-    CGContextRotateCTM(context, -M_PI_2);
+    if ([TiUtils boolValue:[self.proxy valueForKey:@"mirror"] def:YES])
+    {
+        CGContextRotateCTM(context, -M_PI_2);
+    }
     CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef);
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
