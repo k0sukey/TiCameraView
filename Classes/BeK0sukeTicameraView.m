@@ -6,47 +6,58 @@
 
 @implementation BeK0sukeTicameraView
 
--(void)dealloc
+-(void)initializeState
 {
-    RELEASE_TO_NIL(successPictureCallback);
-    RELEASE_TO_NIL(errorPictureCallback);
-    RELEASE_TO_NIL(successRecordingCallback);
-    RELEASE_TO_NIL(errorRecordingCallback);
-#ifndef __i386__
-    [self.videoSession stopRunning];
-#endif
-    [super dealloc];
-}
-
--(id)init
-{
-    self = [super init];
+    [super initializeState];
 #ifndef __i386__
     if (self)
     {
+        if (self.videoPreview == nil)
+        {
+            self.videoPreview = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0,
+                                                                              [TiUtils floatValue:[self.proxy valueForKey:@"width"]],
+                                                                              [TiUtils floatValue:[self.proxy valueForKey:@"height"]])];
+            [self addSubview:self.videoPreview];
+        }
+        
         UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc]
                                                  initWithTarget:self
                                                  action:@selector(tapDetected:)];
         [self addGestureRecognizer:tapRecognizer];
         [tapRecognizer release];
+        
+        [self setupAVCapture];
     }
 #endif
-    return self;
 }
 
--(void)frameSizeChanged:(CGRect)frame bounds:(CGRect)bounds
+-(void)dealloc
 {
 #ifndef __i386__
-    if (self.videoPreview == nil)
-    {
-        self.videoPreview = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0,
-                                                                     bounds.size.width,
-                                                                     bounds.size.height)];
-        [self addSubview:self.videoPreview];
-    }
+    isCameraInputOutput = NO;
     
-    [self setupAVCapture];
+    AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    [device removeObserver:self forKeyPath:@"adjustingExposure"];
+    
+    [self.videoSession stopRunning];
+    [self.videoOutput setSampleBufferDelegate:nil queue:dispatch_get_main_queue()];
+    [self.videoPreview removeFromSuperview];
+    
+    for (UIGestureRecognizer *gesture in [self gestureRecognizers])
+    {
+        if ([gesture isKindOfClass:[UITapGestureRecognizer class]])
+        {
+            [self removeGestureRecognizer:gesture];
+        }
+    }
 #endif
+    
+    RELEASE_TO_NIL(successPictureCallback);
+    RELEASE_TO_NIL(errorPictureCallback);
+    RELEASE_TO_NIL(successRecordingCallback);
+    RELEASE_TO_NIL(errorRecordingCallback);
+    
+    [super dealloc];
 }
 
 -(void)dispatchCallback:(NSArray*)args
@@ -64,9 +75,10 @@
 #ifndef __i386__
     NSError *error = nil;
     
-    AVCaptureDevice *captureDevice = [self deviceWithPosition: [TiUtils intValue:[self.proxy valueForKey:@"cameraPosition"]
+    AVCaptureDevice *device = [self deviceWithPosition: [TiUtils intValue:[self.proxy valueForKey:@"cameraPosition"]
                                                                              def:AVCaptureDevicePositionBack]];
-    self.videoInput = [[AVCaptureDeviceInput alloc] initWithDevice:captureDevice error:&error];
+    self.videoInput = [[AVCaptureDeviceInput alloc] initWithDevice:device
+                                                             error:&error];
     
     if (!self.videoInput)
     {
@@ -82,10 +94,10 @@
                                                     def:AVCaptureSessionPresetMedium];
     [self.videoSession commitConfiguration];
     
-    [captureDevice addObserver:self
-                    forKeyPath:@"adjustingExposure"
-                       options:NSKeyValueObservingOptionNew
-                       context:nil];
+    [device addObserver:self
+             forKeyPath:@"adjustingExposure"
+                options:NSKeyValueObservingOptionNew
+                context:nil];
     
     self.videoOutput = [[AVCaptureVideoDataOutput alloc] init];
     [self.videoSession addOutput:self.videoOutput];
@@ -93,14 +105,26 @@
     dispatch_queue_t queue = dispatch_queue_create("be.k0suke.ticamera.captureQueue", NULL);
     [self.videoOutput setAlwaysDiscardsLateVideoFrames:TRUE];
     [self.videoOutput setSampleBufferDelegate:self queue:queue];
+    dispatch_release(queue);
     
     self.videoOutput.videoSettings = @{
                                        (id)kCVPixelBufferPixelFormatTypeKey : [NSNumber numberWithInt:kCVPixelFormatType_32BGRA]
                                        };
     
-    AVCaptureConnection *videoConnection = [self.videoOutput connectionWithMediaType:AVMediaTypeVideo];
-    videoConnection.videoMinFrameDuration = CMTimeMake(1, [TiUtils intValue:[self.proxy valueForKey:@"frameDuration"]
-                                                                        def:16]);
+    if ([device respondsToSelector:@selector(setActiveVideoMinFrameDuration:)])
+    {
+        [device lockForConfiguration:&error];
+        [device setActiveVideoMinFrameDuration:CMTimeMake(1, [TiUtils intValue:[self.proxy valueForKey:@"frameDuration"] def:16])];
+        [device unlockForConfiguration];
+    }
+    else
+    {
+        AVCaptureConnection *videoConnection = [self.videoOutput connectionWithMediaType:AVMediaTypeVideo];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        videoConnection.videoMinFrameDuration = CMTimeMake(1, [TiUtils intValue:[self.proxy valueForKey:@"frameDuration"] def:16]);
+#pragma clang diagnostic pop
+    }
     
     isCameraInputOutput = YES;
     
@@ -156,7 +180,9 @@
             id listener = [[successPictureCallback retain] autorelease];
             NSMutableDictionary *event = [TiUtils dictionaryWithCode:0 message:nil];
             [event setObject:[[[TiBlob alloc] initWithImage:self.videoPreview.image] autorelease] forKey:@"media"];
-            [NSThread detachNewThreadSelector:@selector(dispatchCallback:) toTarget:self withObject:[NSArray arrayWithObjects:@"success", event, listener, nil]];
+            [NSThread detachNewThreadSelector:@selector(dispatchCallback:)
+                                     toTarget:self
+                                   withObject:[NSArray arrayWithObjects:@"success", event, listener, nil]];
         }
     }
     else
@@ -165,7 +191,9 @@
         {
             id listener = [[errorPictureCallback retain] autorelease];
             NSMutableDictionary *event = [TiUtils dictionaryWithCode:-1 message:@"AVCaptureConnection connect failed"];
-            [NSThread detachNewThreadSelector:@selector(dispatchCallback:) toTarget:self withObject:[NSArray arrayWithObjects:@"error", event, listener, nil]];
+            [NSThread detachNewThreadSelector:@selector(dispatchCallback:)
+                                     toTarget:self
+                                   withObject:[NSArray arrayWithObjects:@"error", event, listener, nil]];
         }
     }
 #endif
@@ -192,8 +220,8 @@
                                            @"output",
                                            [format stringFromDate:[NSDate date]],
                                            @".mov"]];
-    recordingSize = CGSizeMake([TiUtils intValue:[self.proxy valueForKey:@"width"]],
-                               [TiUtils intValue:[self.proxy valueForKey:@"height"]]);
+    recordingSize = CGSizeMake([TiUtils floatValue:[self.proxy valueForKey:@"width"]],
+                               [TiUtils floatValue:[self.proxy valueForKey:@"height"]]);
     
     NSError *error = nil;
     self.recordingWriter = [[AVAssetWriter alloc] initWithURL:recordingUrl fileType:AVFileTypeQuickTimeMovie error:&error];
@@ -254,7 +282,9 @@
         {
             id listener = [[errorRecordingCallback retain] autorelease];
             NSMutableDictionary *event = [TiUtils dictionaryWithCode:-1 message:@"video recording not start"];
-            [NSThread detachNewThreadSelector:@selector(dispatchCallback:) toTarget:self withObject:[NSArray arrayWithObjects:@"error", event, listener, nil]];
+            [NSThread detachNewThreadSelector:@selector(dispatchCallback:)
+                                     toTarget:self
+                                   withObject:[NSArray arrayWithObjects:@"error", event, listener, nil]];
         }
         return;
     }
@@ -285,8 +315,12 @@
                             NSMutableDictionary *event = [TiUtils dictionaryWithCode:0 message:nil];
                             NSData *data = [NSData dataWithContentsOfURL:recordingUrl];
                             [event setObject:[[[TiBlob alloc] initWithData:data mimetype:@"video/quicktime"] autorelease] forKey:@"media"];
-                            [NSThread detachNewThreadSelector:@selector(dispatchCallback:) toTarget:self withObject:[NSArray arrayWithObjects:@"success", event, listener, nil]];
+                            [NSThread detachNewThreadSelector:@selector(dispatchCallback:)
+                                                     toTarget:self
+                                                   withObject:[NSArray arrayWithObjects:@"success", event, listener, nil]];
                         }
+                        
+                        dispatch_release(queue);
                     });
                 }];
                 return;
@@ -328,7 +362,11 @@
     NSNumber *delay = [NSNumber numberWithFloat:[[args objectForKey:@"intervalDelay"] intValue] / 1000];
     isInterval = NO;
     
-    self.intervalTimer = [NSTimer scheduledTimerWithTimeInterval:[delay floatValue] target:self selector:@selector(intervalFlag:) userInfo:nil repeats:YES];
+    self.intervalTimer = [NSTimer scheduledTimerWithTimeInterval:[delay floatValue]
+                                                          target:self
+                                                        selector:@selector(intervalFlag:)
+                                                        userInfo:nil
+                                                         repeats:YES];
 }
 
 -(void)intervalFlag:(NSTimer*)timer
@@ -357,9 +395,8 @@
             return NUMBOOL(YES);
         }
     }
-    
-    return NUMBOOL(NO);
 #endif
+    return NUMBOOL(NO);
 }
 
 -(id)isBackCamera:(id)args
@@ -370,14 +407,13 @@
         NSError *error = nil;
         
         AVCaptureDevicePosition position = [[self.videoInput device] position];
-        if (position == AVCaptureDevicePositionFront)
+        if (position == AVCaptureDevicePositionBack)
         {
-            return NUMBOOL(NO);
+            return NUMBOOL(YES);
         }
     }
-    
-    return NUMBOOL(YES);
 #endif
+    return NUMBOOL(NO);
 }
 
 -(id)isTorch:(id)args
@@ -390,9 +426,8 @@
     {
         return NUMBOOL(YES);
     }
-    
-    return NUMBOOL(NO);
 #endif
+    return NUMBOOL(NO);
 }
 
 -(void)toggleCamera:(id)args
@@ -634,7 +669,10 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     }
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        self.videoPreview.image = image;
+        if (isCameraInputOutput)
+        {
+            self.videoPreview.image = image;
+        }
     });
 }
 
@@ -669,9 +707,9 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 }
 
 -(void)observeValueForKeyPath:(NSString *)keyPath
-                      ofObject:(id)object
-                        change:(NSDictionary *)change
-                       context:(void *)context
+                     ofObject:(id)object
+                       change:(NSDictionary *)change
+                      context:(void *)context
 {
     if (!adjustingExposure)
     {

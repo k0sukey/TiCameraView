@@ -5,7 +5,7 @@
 #import "TiUIView.h"
 #import <AVFoundation/AVFoundation.h>
 
-@interface BeK0sukeTicameraView : TiUIView<AVCaptureAudioDataOutputSampleBufferDelegate, AVCaptureVideoDataOutputSampleBufferDelegate> {
+@interface BeK0sukeTicameraView : TiUIView<AVCaptureVideoDataOutputSampleBufferDelegate> {
 @private
     KrollCallback *successPictureCallback;
     KrollCallback *errorPictureCallback;
@@ -25,7 +25,7 @@
 @property (nonatomic, strong) AVCaptureDeviceInput *videoInput;
 @property (nonatomic, strong) AVCaptureVideoDataOutput *videoOutput;
 @property (nonatomic, strong) AVCaptureSession *videoSession;
-@property (nonatomic, strong) UIImageView *videoPreview;
+@property (nonatomic, assign) UIImageView *videoPreview;
 @property (nonatomic, strong) NSMutableArray *recordingBuffer;
 @property (nonatomic, strong) AVAssetWriter *recordingWriter;
 @property (nonatomic, strong) AVAssetWriterInput *recordingInput;
