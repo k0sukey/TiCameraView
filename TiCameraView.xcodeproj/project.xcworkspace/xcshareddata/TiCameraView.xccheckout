@@ -5,37 +5,56 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
+<<<<<<< HEAD
 	<string>FA3A061A-68AD-4AA7-800D-97A8C28AAD68</string>
+=======
+	<string>1EC669B2-7B62-4362-A515-DF4ACE338435</string>
+>>>>>>> aded37604f74fcebdf01e78cc79c55d09055de9d
 	<key>IDESourceControlProjectName</key>
 	<string>TiCameraView</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
+<<<<<<< HEAD
 		<key>342D0DA1-8AE4-4201-AE2C-A5850C7D3C48</key>
 		<string>ssh://github.com/k0sukey/TiCameraView.git</string>
 		<key>64627644-1ED0-4691-9C9B-58E7E18CE2FF</key>
 		<string>ssh://github.com/BradLarson/GPUImage.git</string>
+=======
+		<key>4224815B-C6E5-4A91-8A7A-5BC2DF463EA1</key>
+		<string>ssh://github.com/k0sukey/TiCameraView.git</string>
+>>>>>>> aded37604f74fcebdf01e78cc79c55d09055de9d
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>TiCameraView.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
+<<<<<<< HEAD
 		<key>342D0DA1-8AE4-4201-AE2C-A5850C7D3C48</key>
 		<string>../..</string>
 		<key>64627644-1ED0-4691-9C9B-58E7E18CE2FF</key>
 		<string>../../GPUImage</string>
+=======
+		<key>4224815B-C6E5-4A91-8A7A-5BC2DF463EA1</key>
+		<string>../..</string>
+>>>>>>> aded37604f74fcebdf01e78cc79c55d09055de9d
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>ssh://github.com/k0sukey/TiCameraView.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>110</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
+<<<<<<< HEAD
 	<string>342D0DA1-8AE4-4201-AE2C-A5850C7D3C48</string>
+=======
+	<string>4224815B-C6E5-4A91-8A7A-5BC2DF463EA1</string>
+>>>>>>> aded37604f74fcebdf01e78cc79c55d09055de9d
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
+<<<<<<< HEAD
 			<string>64627644-1ED0-4691-9C9B-58E7E18CE2FF</string>
 			<key>IDESourceControlWCCName</key>
 			<string>GPUImage</string>
@@ -45,6 +64,9 @@
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
 			<string>342D0DA1-8AE4-4201-AE2C-A5850C7D3C48</string>
+=======
+			<string>4224815B-C6E5-4A91-8A7A-5BC2DF463EA1</string>
+>>>>>>> aded37604f74fcebdf01e78cc79c55d09055de9d
 			<key>IDESourceControlWCCName</key>
 			<string>TiCameraView</string>
 		</dict>
